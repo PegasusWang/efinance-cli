@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "efinance-cli"
+version = "0.2.0"
+description = "CLI tool for efinance - Get stock, fund, bond and futures data from command line"
+readme = "README.md"
+authors = [{ name = "efinance-cli contributors" }]
+license = { text = "MIT" }
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["finance", "quant", "stock", "fund", "futures", "cli", "typer"]
+dependencies = [
+    "efinance>=0.5.8",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pandas>=1.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "ruff>=0.0.260",
+]
+
+[project.scripts]
+efinance-cli = "efinance_cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/PegasusWang/efinance-cli"
+Documentation = "https://github.com/PegasusWang/efinance-cli#readme"
+Source = "https://github.com/PegasusWang/efinance-cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
