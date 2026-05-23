@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "efinance-cli"
-version = "0.2.0"
+version = "0.2.1"
 description = "CLI tool for efinance - Get stock, fund, bond and futures data from command line"
 readme = "README.md"
 authors = [{ name = "efinance-cli contributors" }]
@@ -39,7 +39,9 @@ efinance-cli = "efinance_cli.main:app"
 [project.urls]
 Homepage = "https://github.com/PegasusWang/efinance-cli"
 Documentation = "https://github.com/PegasusWang/efinance-cli#readme"
-Source = "https://github.com/PegasusWang/efinance-cli"
+Repository = "https://github.com/PegasusWang/efinance-cli"
+Issues = "https://github.com/PegasusWang/efinance-cli/issues"
+Changelog = "https://github.com/PegasusWang/efinance-cli/blob/master/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]

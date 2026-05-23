@@ -1,6 +1,6 @@
 # efinance-cli
 
-[English](README.md) | [中文文档](README_CN.md)
+[English](https://github.com/PegasusWang/efinance-cli/blob/master/README.md) | [中文文档](README_CN.md)
 
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg?style=flat)](https://pypi.python.org/pypi/efinance-cli)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
