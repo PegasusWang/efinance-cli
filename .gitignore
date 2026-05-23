@@ -150,4 +150,6 @@ Thumbs.db
 *.xlsx
 *.json
 
+# personal
 prompt.md
+publish_pypi.sh
