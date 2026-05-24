@@ -217,6 +217,30 @@ Example usage with Claude Code CLI:
 efinance-cli stock history 600519 -o moutai_30days.csv --limit 30
 ```
 
+## Skills
+
+This project includes Claude Code skills for common tasks:
+
+### Filter Fund by Name
+
+Filter funds by name keywords and export to CSV:
+
+```bash
+# Filter funds containing specific keywords
+/filter-fund-by-name 富国 易方达
+
+# Filter quantitative funds
+/filter-fund-by-name 量化 多因子 多策略
+
+# Filter bond funds
+/filter-fund-by-name 债券
+```
+
+The skill will:
+1. Fetch all fund codes from efinance
+2. Filter by keywords (OR logic)
+3. Export results to CSV file
+
 ## Examples
 
 ### Example 1: Get stock data and analyze

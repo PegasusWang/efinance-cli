@@ -650,6 +650,36 @@ efinance-cli stock billboard -o daily_billboard.csv
 echo "每日报告已生成于 $(date)"
 ```
 
+## Skills（技能）
+
+本项目包含 Claude Code 技能，用于常见任务：
+
+### 根据名称筛选基金
+
+根据基金名称关键词筛选基金并导出到 CSV：
+
+```bash
+# 筛选包含特定关键词的基金
+/filter-fund-by-name 富国 易方达
+
+# 筛选量化相关基金
+/filter-fund-by-name 量化 多因子 多策略
+
+# 筛选债券型基金
+/filter-fund-by-name 债券
+```
+
+该技能会：
+1. 从 efinance 获取所有基金代码
+2. 根据关键词过滤（OR 逻辑，任意匹配）
+3. 导出结果到 CSV 文件
+
+**使用示例**：
+```
+用户: 帮我筛选出所有名字包含 "多策略" "多因子" "量化" 的基金代码
+Claude: 执行 /filter-fund-by-name 多策略 多因子 量化，输出 CSV 文件
+```
+
 ## 输出格式
 
 所有命令都使用 Rich 库进行表格格式化输出，例如：
