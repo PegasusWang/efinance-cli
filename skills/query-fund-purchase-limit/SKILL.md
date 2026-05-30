@@ -1,13 +1,13 @@
 ---
 name: query-fund-purchase-limit
-description: 查询基金限购信息，从雪球/蛋卷基金获取每日限购金额。支持批量查询多个基金代码的申购限制。
+description: 查询基金限购信息，使用 akshare 获取基金申购状态、限购金额等购买信息。支持批量查询多个基金代码。
 user-invocable: true
 allowed-tools: Bash, Read
 ---
 
 # 查询基金限购信息
 
-从雪球/蛋卷基金获取基金的每日限购金额信息。
+使用 akshare 获取基金的申购状态、限购金额等购买信息。
 
 ## 使用方式
 
@@ -17,8 +17,8 @@ allowed-tools: Bash, Read
 
 ## 功能说明
 
-1. 调用雪球 API 获取基金申购限制信息
-2. 返回每日限购金额（daily_limit）
+1. 调用 akshare 获取基金购买信息
+2. 返回申购状态、限购金额、暂停申购等信息
 3. 支持批量查询多个基金代码
 
 ## 执行步骤
@@ -26,112 +26,76 @@ allowed-tools: Bash, Read
 ### Python 实现代码
 
 ```python
-import requests
+import akshare as ak
 
-def format_limit_number(limit):
-    """格式化限购金额"""
-    if limit >= 100000000:  # 1亿
-        return f"{limit / 100000000:.0f}亿"
-    elif limit >= 10000:  # 1万
-        return f"{limit / 10000:.0f}万"
-    else:
-        return str(limit)
+def get_fund_purchase_info(fund_codes: list[str]) -> list[dict]:
+    """获取指定基金代码列表的购买信息
 
-def get_purchase_limit(codes):
-    """雪球查询基金是否限购，返回格式
-    {'009101': {'daily_limit': ''}, '001338': {'daily_limit': ''}, '040046': {'daily_limit': '1000'}}
+    Args:
+        fund_codes: 基金代码列表，如 ['010923', '000001']
+
+    Returns:
+        list[dict]: 每个基金的购买信息字典列表，如果未找到则为空字典
     """
-    headers = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Cache-Control': 'max-age=0',
-        'Connection': 'keep-alive',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-    }
-
-    fund_limit_dict = {}
-    for code in codes:
-        params = {
-            'fd_code': code,
-            'type': '022',
-            'channel': '',
-            'transaction_account_id': '',
-        }
-        try:
-            response = requests.get(
-                'https://danjuanfunds.com/djapi/fund/order/trade_info',
-                params=params,
-                headers=headers,
-                timeout=10
-            )
-            data = response.json()
-            limit = int(data['data']['daily_limit'])
-            limit_str = format_limit_number(limit)
-        except Exception as e:
-            limit_str = ''
-
-        fund_limit_dict[code] = {
-            'daily_limit': limit_str,
-        }
-
-    return fund_limit_dict
+    # 获取全部基金购买信息
+    fund_purchase_em_df = ak.fund_purchase_em()
+    
+    result = []
+    for code in fund_codes:
+        filtered_df = fund_purchase_em_df[fund_purchase_em_df['基金代码'] == code]
+        if not filtered_df.empty:
+            result.append(filtered_df.iloc[0].to_dict())
+        else:
+            result.append({})
+    
+    return result
 ```
 
 ### 执行脚本
 
 ```bash
 python3 << 'EOF'
-import requests
 import sys
 
-def format_limit_number(limit):
-    if limit >= 100000000:
-        return f"{limit / 100000000:.0f}亿"
-    elif limit >= 10000:
-        return f"{limit / 10000:.0f}万"
-    else:
-        return str(limit)
+# 检查 akshare 是否安装
+try:
+    import akshare as ak
+except ImportError:
+    print("请先安装 akshare: pip install akshare")
+    sys.exit(1)
 
-def get_purchase_limit(codes):
-    headers = {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X10_15_7) AppleWebKit/537.36',
-    }
+def get_fund_purchase_info(fund_codes: list[str]) -> list[dict]:
+    """获取指定基金代码列表的购买信息"""
+    fund_purchase_em_df = ak.fund_purchase_em()
     
-    fund_limit_dict = {}
-    for code in codes:
-        params = {
-            'fd_code': code,
-            'type': '022',
-            'channel': '',
-            'transaction_account_id': '',
-        }
-        try:
-            response = requests.get(
-                'https://danjuanfunds.com/djapi/fund/order/trade_info',
-                params=params,
-                headers=headers,
-                timeout=10
-            )
-            data = response.json()
-            limit = int(data['data']['daily_limit'])
-            limit_str = format_limit_number(limit)
-        except Exception as e:
-            limit_str = ''
-        
-        fund_limit_dict[code] = {'daily_limit': limit_str}
+    result = []
+    for code in fund_codes:
+        filtered_df = fund_purchase_em_df[fund_purchase_em_df['基金代码'] == code]
+        if not filtered_df.empty:
+            result.append(filtered_df.iloc[0].to_dict())
+        else:
+            result.append({})
     
-    return fund_limit_dict
+    return result
 
 # 从命令行获取基金代码
 codes = sys.argv[1:] if len(sys.argv) > 1 else []
 if not codes:
-    print("请提供基金代码，例如: query-fund-purchase-limit 009101 001338")
+    print("请提供基金代码，例如: /query-fund-purchase-limit 009101 001338")
     sys.exit(1)
 
-result = get_purchase_limit(codes)
-for code, info in result.items():
-    print(f"{code}: 每日限购 {info['daily_limit']}")
+print(f"正在查询 {len(codes)} 个基金的购买信息...")
+results = get_fund_purchase_info(codes)
+
+for i, info in enumerate(results):
+    code = codes[i]
+    if info:
+        print(f"\n{code}: {info.get('基金简称', 'N/A')}")
+        print(f"  申购状态: {info.get('申购状态', 'N/A')}")
+        print(f"  限购金额: {info.get('限制申购金额', 'N/A')}")
+        print(f"  暂停申购: {info.get('暂停申购', 'N/A')}")
+    else:
+        print(f"\n{code}: 未找到购买信息")
 EOF
 ```
 
@@ -145,25 +109,46 @@ EOF
 /query-fund-purchase-limit 009101 001338 040046
 
 # 批量查询纳斯达克基金限购
-/query-fund-purchase-limit 513100 513300 159941
+/query-fund-purchase-limit 513100 513300 159941 270042
+
+# 结合筛选基金使用
+# 先筛选纳斯达克基金，再查询限购
 ```
 
 ## 输出格式
 
-返回字典格式：
+返回字典列表，每个字典包含：
+
 ```python
-{
-    '009101': {'daily_limit': ''},        # 不限购
-    '001338': {'daily_limit': ''},        # 不限购
-    '040046': {'daily_limit': '1000'},    # 每日限购1000元
-    '513100': {'daily_limit': '1万'},     # 每日限购1万元
-}
+[
+    {
+        '基金代码': '009101',
+        '基金简称': '...',
+        '申购状态': '开放申购',      # 或 '暂停申购'
+        '限制申购金额': '1000',      # 每日限购金额
+        '暂停申购': '...',           # 暂停申购说明
+        '最小申购金额': '1',         # 最小申购金额
+        # 其他字段...
+    },
+    {...}
+]
 ```
+
+## 数据字段说明
+
+| 字段 | 说明 |
+|------|------|
+| 基金代码 | 6位基金代码 |
+| 基金简称 | 基金名称 |
+| 申购状态 | 开放申购/暂停申购 |
+| 限制申购金额 | 每日限购金额限制 |
+| 暂停申购 | 暂停申购的具体说明 |
+| 最小申购金额 | 单笔最小申购金额 |
 
 ## 注意事项
 
-- 需要安装 requests 库：`pip install requests`
-- API 来源：雪球/蛋卷基金
-- 空字符串表示不限购
-- 限购金额已格式化（万/亿）
-- 网络请求可能有延迟，建议批量查询时控制数量
+- 需要安装 akshare 库：`pip install akshare`
+- 数据来源：东方财富网
+- 空字典表示未找到该基金的购买信息
+- 批量查询时会获取全部基金购买信息后再过滤，效率较高
+- ETF 场内基金通常不在此数据中显示（场内交易无申购限制）
