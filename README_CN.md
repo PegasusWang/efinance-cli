@@ -34,6 +34,22 @@ pip install -e .
 pip install efinance-cli
 ```
 
+### 安装 Skills（用于 Claude Code）
+
+将 skills 安装到 Claude Code skills 目录：
+
+```bash
+# 使用 uvx（推荐）
+uvx --from github:PegasusWang/efinance-cli install-skills
+
+# 使用 pipx
+pipx run --from github:PegasusWang/efinance-cli install-skills
+```
+
+可用的 skills：
+- `filter-fund-by-name` - 根据关键词筛选基金并导出到 CSV
+- `query-fund-purchase-limit` - 从雪球查询基金限购信息
+
 ## 快速开始
 
 安装完成后，你就可以使用 `efinance-cli` 命令：

@@ -35,6 +35,7 @@ dev = [
 
 [project.scripts]
 efinance-cli = "efinance_cli.main:app"
+install-skills = "efinance_cli.install_skills:main"
 
 [project.urls]
 Homepage = "https://github.com/PegasusWang/efinance-cli"

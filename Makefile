@@ -1,10 +1,14 @@
-.PHONY: install install-dev test clean build help
+.PHONY: install install-dev test clean build help install-skills
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Available targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+install-skills: ## Install skills to ~/.claude/skills/
+	cp -r skills/* ~/.claude/skills/
+	@echo "Skills installed to ~/.claude/skills/"
 
 install: ## Install the package
 	pip install -e .

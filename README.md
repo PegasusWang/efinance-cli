@@ -25,6 +25,22 @@ cd efinance-cli
 pip install -e .
 ```
 
+### Install Skills (for Claude Code)
+
+Install skills to Claude Code skills directory:
+
+```bash
+# Using uvx (recommended)
+uvx --from github:PegasusWang/efinance-cli install-skills
+
+# Using pipx
+pipx run --from github:PegasusWang/efinance-cli install-skills
+```
+
+Available skills:
+- `filter-fund-by-name` - Filter funds by keywords and export to CSV
+- `query-fund-purchase-limit` - Query fund purchase limits from Xueqiu
+
 ## Quick Start
 
 After installation, you can use `efinance-cli` command:
