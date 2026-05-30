@@ -40,10 +40,11 @@ pip install efinance-cli
 
 ```bash
 # 使用 uvx（推荐）
-uvx --from github:PegasusWang/efinance-cli install-skills
+uvx --from git+https://github.com/PegasusWang/efinance-cli.git install-skills
 
 # 使用 pipx
-pipx run --from github:PegasusWang/efinance-cli install-skills
+pipx install git+https://github.com/PegasusWang/efinance-cli.git
+pipx run efinance-cli --help
 ```
 
 可用的 skills：

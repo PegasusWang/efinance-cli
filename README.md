@@ -31,10 +31,11 @@ Install skills to Claude Code skills directory:
 
 ```bash
 # Using uvx (recommended)
-uvx --from github:PegasusWang/efinance-cli install-skills
+uvx --from git+https://github.com/PegasusWang/efinance-cli.git install-skills
 
 # Using pipx
-pipx run --from github:PegasusWang/efinance-cli install-skills
+pipx install git+https://github.com/PegasusWang/efinance-cli.git
+pipx run efinance-cli --help
 ```
 
 Available skills:
